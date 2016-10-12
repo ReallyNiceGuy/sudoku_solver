@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- encoding: utf-8 -*-
 
-import collections
+import copy
 
 class Solver(object):
   constraints = None
@@ -53,33 +53,42 @@ class Solver(object):
         c[(x,y)].append(constraintsBlock[block])
     return c
 
-  def validate(self,table):
+  @staticmethod
+  def validate(table):
     for x in range(0,9):
       for y in range(0,9):
-        for v in self.constraints[(x,y)]:
+        for v in Solver.constraints[(x,y)]:
           if not v(table):
             return False
     return True
 
-  def isValid(self,table,x,y):
-    for v in self.constraints[(x,y)]:
+  @staticmethod
+  def isValid(table,x,y):
+    for v in Solver.constraints[(x,y)]:
       if not v(table):
         return False
     return True
 
-  def solve(self,table,cell=0):
+  @staticmethod
+  def solve(table):
+    t = copy.deepcopy(table)
+    Solver.__solve(t)
+    return t
+
+  @staticmethod
+  def __solve(table,cell=0):
     if cell>80:
       return True
     x = cell//9
     y = cell%9
     if table[x][y] != ".":
-      return self.solve(table,cell+1)
+      return Solver.__solve(table,cell+1)
     for tryVal in range(1,10):
       table[x][y] = str(tryVal)
-      if self.isValid(table,x,y):
+      if Solver.isValid(table,x,y):
 #        Solver.dumpTable(table)
 #        print()
-        ret = self.solve(table,cell+1)
+        ret = Solver.__solve(table,cell+1)
         if ret:
           return True
 
@@ -88,10 +97,10 @@ class Solver(object):
 
   @staticmethod
   def dumpTable(table):
-    for x in t:
+    for x in table:
       print("|",end="")
       for y in x:
-        print(y+"|",end="")
+        print( y+"|",end="")
       print("\n|-+-+-+-+-+-+-+-+-|")
 
   @staticmethod
@@ -110,6 +119,6 @@ if __name__ == "__main__":
   s=Solver()
   #print(s.validate(t))
   #exit(1)
-  s.solve(t)
-  Solver.dumpTable(t)
+  r = s.solve(t)
+  Solver.dumpTable(r)
 
