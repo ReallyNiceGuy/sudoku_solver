@@ -4,6 +4,7 @@
 import collections
 
 class Solver(object):
+  constraints = None
   @staticmethod
   def makeConstraint(x0,y0,x1,y1):
     def validate(table):
@@ -25,10 +26,12 @@ class Solver(object):
     return (j,k)
 
   def __init__(self):
-    self.initializeConstraints()
+    if Solver.constraints is None:
+      Solver.constraints = Solver.initializeConstraints()
 
-  def initializeConstraints(self):
-    self.constraints = dict()
+  @staticmethod
+  def initializeConstraints():
+    c = dict()
     constraintsRow = dict()
     constraintsCol = dict()
     constraintsBlock = dict()
@@ -43,11 +46,12 @@ class Solver(object):
           j,k=block
           constraintsBlock[block]=Solver.makeConstraint(j*3,k*3,j*3+3,k*3+3)
 
-        if not (x,y) in self.constraints:
-          self.constraints[(x,y)] = []
-        self.constraints[(x,y)].append(constraintsCol[x])
-        self.constraints[(x,y)].append(constraintsRow[y])
-        self.constraints[(x,y)].append(constraintsBlock[block])
+        if not (x,y) in c:
+          c[(x,y)] = []
+        c[(x,y)].append(constraintsCol[x])
+        c[(x,y)].append(constraintsRow[y])
+        c[(x,y)].append(constraintsBlock[block])
+    return c
 
   def validate(self,table):
     for x in range(0,9):
