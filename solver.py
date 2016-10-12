@@ -74,23 +74,27 @@ class Solver(object):
   def getOrderedTrip(table,valids):
     minVal=10
     cell = []
+    vals = []
     for key,values in valids.items():
       j,k = key
       t = 0
       if table[j][k] != ".":
         continue
+      lvals = []
       for i in values:
         table[j][k]=i
         if Solver.isValid(table,j,k):
           t=t+1
+          lvals.append(str(i))
           if t>=minVal:
-            continue
+            break
       table[j][k]="."
       if t<minVal:
         minVal=t
+        vals=lvals
         cell=[(j,k)]
         if t==1:break
-    return cell
+    return (cell,vals)
 
   @staticmethod
   def makeValidValues(table):
@@ -117,19 +121,18 @@ class Solver(object):
 
   @staticmethod
   def __solve(table,valids,order):
-    if len(order)==0:
+    if len(order[0])==0:
       return True
-    x, y = order[0]
+    x, y = order[0][0]
     if table[x][y] != ".":
       return Solver.__solve(table,valids,Solver.getOrderedTrip(table,valids))
-    for tryVal in valids[(x,y)]:
+    for tryVal in order[1]:
       table[x][y] = tryVal
-      if Solver.isValid(table,x,y):
-#        Solver.dumpTable(table)
-#        print()
-        ret = Solver.__solve(table,valids,Solver.getOrderedTrip(table,valids))
-        if ret:
-          return True
+#      Solver.dumpTable(table)
+#      print()
+      ret = Solver.__solve(table,valids,Solver.getOrderedTrip(table,valids))
+      if ret:
+        return True
 
     table[x][y]="."
     return False
