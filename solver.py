@@ -70,25 +70,45 @@ class Solver(object):
     return True
 
   @staticmethod
+  def getOrderedTrip(table):
+    minVal=10
+    cell = []
+    for j in range(0,9):
+      for k in range(0,9):
+        t = 0
+        if table[j][k] != ".":
+          continue
+        for i in range(1,10):
+          table[j][k]=str(i)
+          if Solver.isValid(table,j,k):
+            t=t+1
+            if t>=minVal:
+              continue
+        table[j][k]="."
+        if t<minVal:
+          minVal=t
+          cell=[(j,k)]
+    return cell
+
+  @staticmethod
   def solve(table):
     t = copy.deepcopy(table)
-    Solver.__solve(t)
+    Solver.__solve(t,Solver.getOrderedTrip(t))
     return t
 
   @staticmethod
-  def __solve(table,cell=0):
-    if cell>80:
+  def __solve(table,order):
+    if len(order)==0:
       return True
-    x = cell//9
-    y = cell%9
+    x, y = order[0]
     if table[x][y] != ".":
-      return Solver.__solve(table,cell+1)
+      return Solver.__solve(table,Solver.getOrderedTrip(table))
     for tryVal in range(1,10):
       table[x][y] = str(tryVal)
       if Solver.isValid(table,x,y):
 #        Solver.dumpTable(table)
 #        print()
-        ret = Solver.__solve(table,cell+1)
+        ret = Solver.__solve(table,Solver.getOrderedTrip(table))
         if ret:
           return True
 
