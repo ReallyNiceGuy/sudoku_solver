@@ -3,6 +3,7 @@
 
 import copy
 import collections
+import random
 
 class Solver(object):
   constraints = None
@@ -103,6 +104,7 @@ class Solver(object):
           table[j][k]=str(i)
           if Solver.isValid(table,j,k):
             v[(j,k)].append(str(i))
+          random.shuffle(v[(j,k)])
         table[j][k]="."
     return collections.OrderedDict(sorted(v.items(),key=lambda t: len(t[1])))
 
