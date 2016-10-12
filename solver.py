@@ -108,7 +108,7 @@ class Solver(object):
           print("│",end="")
         if table[x][y] != ".":
           if table[x][y] == start[x][y]:
-            print(chr(ord(table[x][y])+120782-ord("0")),end="")
+            print(chr(ord(table[x][y])+120812-ord("0")),end="")
           else:
             print(table[x][y],end="")
         else:
