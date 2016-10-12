@@ -96,7 +96,9 @@ class Solver(object):
     return False
 
   @staticmethod
-  def dumpTable(table):
+  def dumpTable(table,start=None):
+    if start is None:
+      start=table
     print  ("┏━┯━┯━┳━┯━┯━┳━┯━┯━┓")
     for x in range(len(table)):
       for y in range(len(table[x])):
@@ -105,7 +107,10 @@ class Solver(object):
         else:
           print("│",end="")
         if table[x][y] != ".":
-          print(table[x][y],end="")
+          if table[x][y] == start[x][y]:
+            print(chr(ord(table[x][y])+120782-ord("0")),end="")
+          else:
+            print(table[x][y],end="")
         else:
           print(" ",end="")
       
@@ -134,5 +139,5 @@ if __name__ == "__main__":
   #print(s.validate(t))
   #exit(1)
   r = s.solve(t)
-  Solver.dumpTable(r)
+  Solver.dumpTable(r,t)
 
