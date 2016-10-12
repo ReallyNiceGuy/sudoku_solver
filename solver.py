@@ -89,6 +89,7 @@ class Solver(object):
       if t<minVal:
         minVal=t
         cell=[(j,k)]
+        if t==1:break
     return cell
 
   @staticmethod
