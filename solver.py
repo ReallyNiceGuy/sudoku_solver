@@ -10,10 +10,11 @@ class Solver(object):
       found = []
       for x in range(x0,x1):
         for y in range(y0,y1):
+          if table[x][y] == ".":
+            continue
           if table[x][y] in found:
             return False
-          elif table[x][y] != ".":
-            found.append(table[x][y])
+          found.append(table[x][y])
       return True
     return validate
 
