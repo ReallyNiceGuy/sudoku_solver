@@ -7,14 +7,14 @@ class Solver(object):
   @staticmethod
   def makeConstraint(x0,y0,x1,y1):
     def validate(table):
-      found = []
+      found = dict()
       for x in range(x0,x1):
         for y in range(y0,y1):
           if table[x][y] == ".":
             continue
           if table[x][y] in found:
             return False
-          found.append(table[x][y])
+          found[table[x][y]]=True
       return True
     return validate
 
@@ -63,24 +63,21 @@ class Solver(object):
         return False
     return True
 
-  def solve(self,cell,table):
-    tryVal=1
+  def solve(self,table,cell=0):
     if cell>80:
       return True
     x = cell//9
     y = cell%9
-    immutable = table[x][y] != "."
-    while tryVal<10:
-      if immutable:
-        return self.solve(cell+1,table)
+    if table[x][y] != ".":
+      return self.solve(table,cell+1)
+    for tryVal in range(1,10):
       table[x][y] = str(tryVal)
       if self.isValid(table,x,y):
 #        Solver.dumpTable(table)
 #        print()
-        ret = self.solve(cell+1,table)
+        ret = self.solve(table,cell+1)
         if ret:
           return True
-      tryVal = tryVal+1
 
     table[x][y]="."
     return False
@@ -109,6 +106,6 @@ if __name__ == "__main__":
   s=Solver()
   #print(s.validate(t))
   #exit(1)
-  s.solve(0,t)
+  s.solve(t)
   Solver.dumpTable(t)
 
