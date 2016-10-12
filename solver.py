@@ -97,11 +97,25 @@ class Solver(object):
 
   @staticmethod
   def dumpTable(table):
-    for x in table:
-      print("|",end="")
-      for y in x:
-        print( y+"|",end="")
-      print("\n|-+-+-+-+-+-+-+-+-|")
+    print  ("┏━┯━┯━┳━┯━┯━┳━┯━┯━┓")
+    for x in range(len(table)):
+      for y in range(len(table[x])):
+        if y%3 == 0:
+          print("┃",end="")
+        else:
+          print("│",end="")
+        if table[x][y] != ".":
+          print(table[x][y],end="")
+        else:
+          print(" ",end="")
+      
+      print("┃")
+      if x<8:
+        if x%3==2:
+          print("┣━┿━┿━╋━┿━┿━╋━┿━┿━┫")
+        else:
+          print("┠─┼─┼─╂─┼─┼─╂─┼─┼─┨")
+    print("┗━┷━┷━┻━┷━┷━┻━┷━┷━┛")
 
   @staticmethod
   def loadTable(fn):
