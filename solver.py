@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 
 import copy
+import collections
 
 class Solver(object):
   constraints = None
@@ -70,45 +71,62 @@ class Solver(object):
     return True
 
   @staticmethod
-  def getOrderedTrip(table):
+  def getOrderedTrip(table,valids):
     minVal=10
     cell = []
+    for key,values in valids.items():
+      j,k = key
+      t = 0
+      if table[j][k] != ".":
+        continue
+      for i in values:
+        table[j][k]=i
+        if Solver.isValid(table,j,k):
+          t=t+1
+          if t>=minVal:
+            continue
+      table[j][k]="."
+      if t<minVal:
+        minVal=t
+        cell=[(j,k)]
+    return cell
+
+  @staticmethod
+  def makeValidValues(table):
+    v = dict()
     for j in range(0,9):
       for k in range(0,9):
-        t = 0
         if table[j][k] != ".":
           continue
+        v[(j,k)]=[]
         for i in range(1,10):
           table[j][k]=str(i)
           if Solver.isValid(table,j,k):
-            t=t+1
-            if t>=minVal:
-              continue
+            v[(j,k)].append(str(i))
         table[j][k]="."
-        if t<minVal:
-          minVal=t
-          cell=[(j,k)]
-    return cell
+    return collections.OrderedDict(sorted(v.items(),key=lambda t: len(t[1])))
+
 
   @staticmethod
   def solve(table):
     t = copy.deepcopy(table)
-    Solver.__solve(t,Solver.getOrderedTrip(t))
+    valids = Solver.makeValidValues(t)
+    Solver.__solve(t,valids,Solver.getOrderedTrip(t,valids))
     return t
 
   @staticmethod
-  def __solve(table,order):
+  def __solve(table,valids,order):
     if len(order)==0:
       return True
     x, y = order[0]
     if table[x][y] != ".":
-      return Solver.__solve(table,Solver.getOrderedTrip(table))
-    for tryVal in range(1,10):
-      table[x][y] = str(tryVal)
+      return Solver.__solve(table,valids,Solver.getOrderedTrip(table,valids))
+    for tryVal in valids[(x,y)]:
+      table[x][y] = tryVal
       if Solver.isValid(table,x,y):
 #        Solver.dumpTable(table)
 #        print()
-        ret = Solver.__solve(table,Solver.getOrderedTrip(table))
+        ret = Solver.__solve(table,valids,Solver.getOrderedTrip(table,valids))
         if ret:
           return True
 
