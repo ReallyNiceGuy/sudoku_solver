@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 
 import copy
+import re
 import collections
 
 class Solver(object):
@@ -142,13 +143,13 @@ class Solver(object):
   def dumpTable(table,start=None,j=None,k=None):
     if start is None:
       start=table
-    print  ("┏━┯━┯━┳━┯━┯━┳━┯━┯━┓")
+    print  ("┌─────┬─────┬─────┐")
     for x in range(len(table)):
       for y in range(len(table[x])):
         if y%3 == 0:
-          print("┃",end="")
-        else:
           print("│",end="")
+        else:
+          print(" ",end="")
         if table[x][y] != ".":
           if table[x][y] == start[x][y]:
             print(chr(ord(table[x][y])+120812-ord("0")),end="")
@@ -159,20 +160,20 @@ class Solver(object):
         else:
           print(" ",end="")
       
-      print("┃")
+      print("│")
       if x<8:
         if x%3==2:
-          print("┣━┿━┿━╋━┿━┿━╋━┿━┿━┫")
-        else:
-          print("┠─┼─┼─╂─┼─┼─╂─┼─┼─┨")
-    print("┗━┷━┷━┻━┷━┷━┻━┷━┷━┛")
+          print("├─────┼─────┼─────┤")
+    print("└─────┴─────┴─────┘")
 
   @staticmethod
   def loadTable(fn):
     t=[]
     f=open(fn)
     for line in f:
-      t.append(list(line.strip('\n')))
+      l=re.sub("[^123456789.]","",line.strip('\n'))
+      if len(l) > 0:
+        t.append(list(l))
     return t
  
 if __name__ == "__main__":
