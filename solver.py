@@ -135,7 +135,7 @@ class Solver(object):
         return True
 
     table[x][y]="."
-    solution.pop()
+    if len(solution)>0: solution.pop()
     return False
 
   @staticmethod
@@ -184,10 +184,13 @@ if __name__ == "__main__":
   #print(s.validate(t))
   #exit(1)
   r,solution = Solver.solve(t)
-  step=1
-  for x in solution:
-    print("Step %s" % step)
-    step=step+1
-    Solver.dumpTable(x[0],t,x[1][0],x[1][1])
-    print()
-  Solver.dumpTable(r,t)
+  if len(solution)>0:
+    step=1
+    for x in solution:
+      print("Step %s" % step)
+      step=step+1
+      Solver.dumpTable(x[0],t,x[1][0],x[1][1])
+      print()
+    Solver.dumpTable(r,t)
+  else:
+    print("There is no solution")
