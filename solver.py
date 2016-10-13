@@ -71,7 +71,7 @@ class Solver(object):
     return True
 
   @staticmethod
-  def getOrderedTrip(table,valids):
+  def getNextCell(table,valids):
     minVal=10
     cell = []
     vals = []
@@ -114,31 +114,32 @@ class Solver(object):
 
   @staticmethod
   def solve(table):
+    solution = []
     t = copy.deepcopy(table)
     valids = Solver.makeValidValues(t)
-    Solver.__solve(t,valids,Solver.getOrderedTrip(t,valids))
-    return t
+    Solver.__solve(t,valids,Solver.getNextCell(t,valids),solution)
+    return (t,solution)
 
   @staticmethod
-  def __solve(table,valids,order):
+  def __solve(table,valids,order,solution):
     if len(order[0])==0:
       return True
     x, y = order[0][0]
     if table[x][y] != ".":
-      return Solver.__solve(table,valids,Solver.getOrderedTrip(table,valids))
+      return Solver.__solve(table,valids,Solver.getNextCell(table,valids),solution)
     for tryVal in order[1]:
       table[x][y] = tryVal
-#      Solver.dumpTable(table)
-#      print()
-      ret = Solver.__solve(table,valids,Solver.getOrderedTrip(table,valids))
+      solution.append((copy.deepcopy(table),(x,y)))
+      ret = Solver.__solve(table,valids,Solver.getNextCell(table,valids),solution)
       if ret:
         return True
 
     table[x][y]="."
+    solution.pop()
     return False
 
   @staticmethod
-  def dumpTable(table,start=None):
+  def dumpTable(table,start=None,j=None,k=None):
     if start is None:
       start=table
     print  ("┏━┯━┯━┳━┯━┯━┳━┯━┯━┓")
@@ -151,6 +152,8 @@ class Solver(object):
         if table[x][y] != ".":
           if table[x][y] == start[x][y]:
             print(chr(ord(table[x][y])+120812-ord("0")),end="")
+          elif x==j and y==k:
+            print(chr(ord(table[x][y])+120792-ord("0")),end="")
           else:
             print(table[x][y],end="")
         else:
@@ -180,6 +183,11 @@ if __name__ == "__main__":
   s=Solver()
   #print(s.validate(t))
   #exit(1)
-  r = s.solve(t)
+  r,solution = Solver.solve(t)
+  step=1
+  for x in solution:
+    print("Step %s" % step)
+    step=step+1
+    Solver.dumpTable(x[0],t,x[1][0],x[1][1])
+    print()
   Solver.dumpTable(r,t)
-
