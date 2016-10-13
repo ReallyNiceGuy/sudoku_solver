@@ -171,7 +171,8 @@ class Solver(object):
     t=[]
     f=open(fn)
     for line in f:
-      l=re.sub("[^123456789.]","",line.strip('\n'))
+      l=re.sub("[^0123456789.]","",line.strip('\n'))
+      l=l.replace("0",".")
       if len(l) > 0:
         t.append(list(l))
     return t
