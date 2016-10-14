@@ -152,13 +152,13 @@ class Solver(object):
           print(" ",end="")
         if table[x][y] != ".":
           if table[x][y] == start[x][y]:
-            print(chr(ord(table[x][y])+0x1d7ec-ord("0")),end="")
+            print(chr(ord(table[x][y])+ord("\N{MATHEMATICAL SANS-SERIF BOLD DIGIT ONE}")-ord("\N{DIGIT ONE}")),end="")
           elif x==j and y==k:
-            print(chr(ord(table[x][y])+0x277f-ord("0")),end="")
+            print(chr(ord(table[x][y])+ord("\N{CIRCLED DIGIT ONE}")-ord("\N{DIGIT ONE}")),end="")
           else:
             print(table[x][y],end="")
         else:
-          print("\u00b7",end="")
+          print("\N{MIDDLE DOT}",end="")
       
       print("│")
       if x<8:
