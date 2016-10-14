@@ -152,13 +152,13 @@ class Solver(object):
           print(" ",end="")
         if table[x][y] != ".":
           if table[x][y] == start[x][y]:
-            print(chr(ord(table[x][y])+120812-ord("0")),end="")
+            print(chr(ord(table[x][y])+0x1d7ec-ord("0")),end="")
           elif x==j and y==k:
             print(chr(ord(table[x][y])+0x277f-ord("0")),end="")
           else:
             print(table[x][y],end="")
         else:
-          print(" ",end="")
+          print("\u00b7",end="")
       
       print("│")
       if x<8:
