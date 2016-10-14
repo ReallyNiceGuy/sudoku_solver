@@ -167,9 +167,8 @@ class Solver(object):
     print("└─────┴─────┴─────┘")
 
   @staticmethod
-  def loadTable(fn):
+  def loadTable(f):
     t=[]
-    f=open(fn)
     for line in f:
       l=re.sub("[^0123456789.]","",line.strip('\n'))
       l=l.replace("0",".")
@@ -178,8 +177,14 @@ class Solver(object):
     return t
  
 if __name__ == "__main__":
-  import sys
-  t=Solver.loadTable(sys.argv[1])
+  import argparse
+
+  parser = argparse.ArgumentParser(description="Solve sudoku")
+  parser.add_argument("-s", "--steps",action='store_true',help="show solution steps")
+  parser.add_argument("game",type=argparse.FileType('r'),nargs=1)
+  options=parser.parse_args()
+
+  t=Solver.loadTable(options.game[0])
   Solver.dumpTable(t)
   print()
   s=Solver()
@@ -187,12 +192,13 @@ if __name__ == "__main__":
   #exit(1)
   r,solution = Solver.solve(t)
   if len(solution)>0:
-    step=1
-    for x in solution:
-      print("Step %s" % step)
-      step=step+1
-      Solver.dumpTable(x[0],t,x[1][0],x[1][1])
-      print()
+    if (options.steps):
+      step=1
+      for x in solution:
+        print("Step %s" % step)
+        step=step+1
+        Solver.dumpTable(x[0],t,x[1][0],x[1][1])
+        print()
     Solver.dumpTable(r,t)
   else:
     print("There is no solution")
