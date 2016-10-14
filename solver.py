@@ -13,7 +13,7 @@ class Solver(object):
       found = dict()
       for x in range(x0,x1):
         for y in range(y0,y1):
-          if table[x][y] == ".":
+          if table[x][y] == "0":
             continue
           if table[x][y] in found:
             return False
@@ -79,7 +79,7 @@ class Solver(object):
     for key,values in valids.items():
       j,k = key
       t = 0
-      if table[j][k] != ".":
+      if table[j][k] != "0":
         continue
       lvals = []
       for i in values:
@@ -89,7 +89,7 @@ class Solver(object):
           lvals.append(str(i))
           if t>=minVal:
             break
-      table[j][k]="."
+      table[j][k]="0"
       if t<minVal:
         minVal=t
         vals=lvals
@@ -102,14 +102,14 @@ class Solver(object):
     v = dict()
     for j in range(0,9):
       for k in range(0,9):
-        if table[j][k] != ".":
+        if table[j][k] != "0":
           continue
         v[(j,k)]=[]
         for i in range(1,10):
           table[j][k]=str(i)
           if Solver.isValid(table,j,k):
             v[(j,k)].append(str(i))
-        table[j][k]="."
+        table[j][k]="0"
     return collections.OrderedDict(sorted(v.items(),key=lambda t: [len(t[1]),t[1]]))
 
 
@@ -126,7 +126,7 @@ class Solver(object):
     if len(order[0])==0:
       return True
     x, y = order[0][0]
-    if table[x][y] != ".":
+    if table[x][y] != "0":
       return Solver.__solve(table,valids,Solver.getNextCell(table,valids),solution)
     for tryVal in order[1]:
       table[x][y] = tryVal
@@ -135,7 +135,7 @@ class Solver(object):
       if ret:
         return True
 
-    table[x][y]="."
+    table[x][y]="0"
     if len(solution)>0: solution.pop()
     return False
 
@@ -150,7 +150,7 @@ class Solver(object):
           print("│",end="")
         else:
           print(" ",end="")
-        if table[x][y] != ".":
+        if table[x][y] != "0":
           if table[x][y] == start[x][y]:
             print(chr(ord(table[x][y])+ord("\N{MATHEMATICAL SANS-SERIF BOLD DIGIT ONE}")-ord("\N{DIGIT ONE}")),end="")
           elif x==j and y==k:
@@ -170,10 +170,10 @@ class Solver(object):
   def loadTable(f):
     t=[]
     for line in f:
-      l=re.sub("[^0123456789.]","",line.strip('\n'))
-      l=l.replace("0",".")
+      l=re.sub("[^.\\d\N{MIDDLE DOT}]","",line.strip('\n'))
+      l=re.sub("[.\N{MIDDLE DOT}]","0",l)
       if len(l) > 0:
-        t.append(list(l))
+        t.append([ str(int(x)) for x in l ])
     return t
  
 if __name__ == "__main__":
