@@ -27,46 +27,52 @@ class Solver(object):
     k=y//3
     return (j,k)
 
-  def __init__(self):
+  @staticmethod
+  def getConstraints():
     if Solver.constraints is None:
-      Solver.constraints = Solver.initializeConstraints()
+      c = dict()
+      constraintsRow = dict()
+      constraintsCol = dict()
+      constraintsBlock = dict()
+      for x in range(0,9):
+        if not x in constraintsCol:
+          constraintsCol[x]=Solver.makeConstraint(x,0,x+1,9)
+        for y in range(0,9):
+          if not y in constraintsRow:
+            constraintsRow[y]=Solver.makeConstraint(0,y,9,y+1)
+          block = Solver.getBlock(x,y)
+          if not block in constraintsBlock:
+            j,k=block
+            constraintsBlock[block]=Solver.makeConstraint(j*3,k*3,j*3+3,k*3+3)
+
+          if not (x,y) in c:
+            c[(x,y)] = []
+          c[(x,y)].append(constraintsCol[x])
+          c[(x,y)].append(constraintsRow[y])
+          c[(x,y)].append(constraintsBlock[block])
+      Solver.constraints = c
+    return Solver.constraints
 
   @staticmethod
-  def initializeConstraints():
-    c = dict()
-    constraintsRow = dict()
-    constraintsCol = dict()
-    constraintsBlock = dict()
-    for x in range(0,9):
-      if not x in constraintsCol:
-        constraintsCol[x]=Solver.makeConstraint(x,0,x+1,9)
-      for y in range(0,9):
-        if not y in constraintsRow:
-          constraintsRow[y]=Solver.makeConstraint(0,y,9,y+1)
-        block = Solver.getBlock(x,y)
-        if not block in constraintsBlock:
-          j,k=block
-          constraintsBlock[block]=Solver.makeConstraint(j*3,k*3,j*3+3,k*3+3)
-
-        if not (x,y) in c:
-          c[(x,y)] = []
-        c[(x,y)].append(constraintsCol[x])
-        c[(x,y)].append(constraintsRow[y])
-        c[(x,y)].append(constraintsBlock[block])
-    return c
-
-  @staticmethod
-  def validate(table):
+  def isValidTable(table):
     for x in range(0,9):
       for y in range(0,9):
-        for v in Solver.constraints[(x,y)]:
+        for v in Solver.getConstraints()[(x,y)]:
           if not v(table):
             return False
     return True
 
   @staticmethod
+  def isComplete(table):
+    for x in range(0,9):
+      for y in range(0,9):
+        if table[x][y] == "0":
+          return False
+    return True
+ 
+  @staticmethod
   def isValid(table,x,y):
-    for v in Solver.constraints[(x,y)]:
+    for v in Solver.getConstraints()[(x,y)]:
       if not v(table):
         return False
     return True
@@ -185,20 +191,29 @@ if __name__ == "__main__":
   options=parser.parse_args()
 
   t=Solver.loadTable(options.game[0])
+  options.game[0].close()
   Solver.dumpTable(t)
   print()
-  s=Solver()
-  #print(s.validate(t))
-  #exit(1)
-  r,solution = Solver.solve(t)
-  if len(solution)>0:
-    if (options.steps):
-      step=1
-      for x in solution:
-        print("Step %s" % step)
-        step=step+1
-        Solver.dumpTable(x[0],t,x[1][0],x[1][1])
-        print()
-    Solver.dumpTable(r,t)
+  if Solver.isComplete(t):
+    if Solver.isValidTable(t):
+      print("Already solved")
+    else:
+      print("Invalid game")
   else:
-    print("There is no solution")
+    if Solver.isValidTable(t):
+      #print(s.validate(t))
+      #exit(1)
+      r,solution = Solver.solve(t)
+      if len(solution)>0:
+        if (options.steps):
+          step=1
+          for x in solution:
+            print("Step %s" % step)
+            step=step+1
+            Solver.dumpTable(x[0],t,x[1][0],x[1][1])
+            print()
+        Solver.dumpTable(r,t)
+      else:
+        print("There is no solution")
+    else:
+      print("Invalid game")
