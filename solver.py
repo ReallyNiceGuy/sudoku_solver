@@ -154,7 +154,7 @@ class Solver(object):
           if table[x][y] == start[x][y]:
             print(chr(ord(table[x][y])+120812-ord("0")),end="")
           elif x==j and y==k:
-            print(chr(ord(table[x][y])+120792-ord("0")),end="")
+            print(chr(ord(table[x][y])+0x277f-ord("0")),end="")
           else:
             print(table[x][y],end="")
         else:
