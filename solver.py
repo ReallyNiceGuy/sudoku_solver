@@ -149,16 +149,18 @@ class Solver(object):
   def dumpTable(table,start=None,j=None,k=None):
     if start is None:
       start=table
-    print  ("┌─────┬─────┬─────┐")
+    print  ("┌──────┬──────┬──────┐")
     for x in range(len(table)):
       for y in range(len(table[x])):
         if y%3 == 0:
+          if y!=0:
+            print(" ",end="")
           print("│",end="")
         else:
           print(" ",end="")
         if table[x][y] != "0":
           if table[x][y] == start[x][y]:
-            print(chr(ord(table[x][y])+ord("\N{MATHEMATICAL SANS-SERIF BOLD DIGIT ONE}")-ord("\N{DIGIT ONE}")),end="")
+            print(chr(ord(table[x][y])+ord("\N{DINGBAT NEGATIVE CIRCLED SANS-SERIF DIGIT ONE}")-ord("\N{DIGIT ONE}")),end="")
           elif x==j and y==k:
             print(chr(ord(table[x][y])+ord("\N{CIRCLED DIGIT ONE}")-ord("\N{DIGIT ONE}")),end="")
           else:
@@ -166,11 +168,11 @@ class Solver(object):
         else:
           print("\N{MIDDLE DOT}",end="")
       
-      print("│")
+      print(" │")
       if x<8:
         if x%3==2:
-          print("├─────┼─────┼─────┤")
-    print("└─────┴─────┴─────┘")
+          print("├──────┼──────┼──────┤")
+    print("└──────┴──────┴──────┘")
 
   @staticmethod
   def loadTable(f):
